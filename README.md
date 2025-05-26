@@ -6,13 +6,13 @@
 
 <table>
   <tr>
-    <td align="center" width="33%" bgcolor="#ffffff">
+    <td align="center" width="33%">
       <img src="https://www.rancher.com/assets/img/logos/rancher-logo-stacked-color.svg" alt="Rancher Logo" width="250"/>
     </td>
-    <td align="center" width="33%" bgcolor="#ffffff">
+    <td align="center" width="33%">
       <img src="https://res.cloudinary.com/canonical/image/fetch/f_auto,q_auto,fl_sanitize,c_fill,w_720/https://lh3.googleusercontent.com/hZHbXA0bvKJ089pTXuoTPgv-T4eHBIvmfZ4nh4tkKg2OoZ8cTQNtZXLl6zeXjNc4Df0BnxzfF4pTFoCHWm7WFz6ci8h4QzqnVA80eWcNbwdZegHhJRea-cWr05wTw-WDbbzuIumrIGZNnl0Xxw" alt="Multipass Logo" width="250"/>
     </td>
-    <td align="center" width="33%" bgcolor="#ffffff">
+    <td align="center" width="33%">
       <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/24/Ansible_logo.svg/1664px-Ansible_logo.svg.png" alt="Ansible Logo" width="250"/>
     </td>
   </tr>
