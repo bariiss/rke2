@@ -7,12 +7,12 @@ all: check-deps launch update-inventory run-ansible
 check-deps:
 	@echo "🔍 Checking dependencies..."
 	@if ! command -v yq >/dev/null 2>&1; then \
-		echo "⚠️  yq not found."; \
+		echo "⚠️ yq not found."; \
 		if [ "$$(uname)" = "Darwin" ]; then \
-			echo "➡️  Installing yq via Homebrew..."; \
+			echo "➡️ Installing yq via Homebrew..."; \
 			brew install yq; \
 		else \
-			echo "➡️  Installing yq via apt..."; \
+			echo "➡️ Installing yq via apt..."; \
 			sudo apt update && sudo apt install -y yq; \
 		fi; \
 	else \
@@ -20,12 +20,12 @@ check-deps:
 	fi
 
 	@if ! command -v jq >/dev/null 2>&1; then \
-		echo "⚠️  jq not found."; \
+		echo "⚠️ jq not found."; \
 		if [ "$$(uname)" = "Darwin" ]; then \
-			echo "➡️  Installing jq via Homebrew..."; \
+			echo "➡️ Installing jq via Homebrew..."; \
 			brew install jq; \
 		else \
-			echo "➡️  Installing jq via apt..."; \
+			echo "➡️ Installing jq via apt..."; \
 			sudo apt update && sudo apt install -y jq; \
 		fi; \
 	else \
@@ -33,12 +33,12 @@ check-deps:
 	fi
 
 	@if ! command -v multipass >/dev/null 2>&1; then \
-		echo "⚠️  multipass not found."; \
+		echo "⚠️ multipass not found."; \
 		if [ "$$(uname)" = "Darwin" ]; then \
-			echo "➡️  Installing multipass via Homebrew..."; \
+			echo "➡️ Installing multipass via Homebrew..."; \
 			brew install --cask multipass; \
 		else \
-			echo "➡️  Installing multipass via apt..."; \
+			echo "➡️ Installing multipass via apt..."; \
 			sudo snap install multipass --classic; \
 		fi; \
 	else \
@@ -46,12 +46,12 @@ check-deps:
 	fi
 
 	@if ! command -v ansible >/dev/null 2>&1; then \
-		echo "⚠️  ansible not found."; \
+		echo "⚠️ ansible not found."; \
 		if [ "$$(uname)" = "Darwin" ]; then \
-			echo "➡️  Installing ansible via Homebrew..."; \
+			echo "➡️ Installing ansible via Homebrew..."; \
 			brew install ansible; \
 		else \
-			echo "➡️  Installing ansible via apt..."; \
+			echo "➡️ Installing ansible via apt..."; \
 			sudo apt update && sudo apt install -y ansible; \
 		fi; \
 	else \
@@ -76,11 +76,11 @@ launch:
 
 destroy: check-deps
 	@$(YQ) -r '.vms[] | .name' vms.yml | while read name; do \
-		echo "🗑️  Attempting to delete $$name..."; \
+		echo "🗑️ Attempting to delete $$name..."; \
 		if multipass delete $$name 2>/dev/null; then \
 			echo "✅ Deleted $$name"; \
 		else \
-			echo "ℹ️  $$name was already deleted or doesn't exist."; \
+			echo "ℹ️ $$name was already deleted or doesn't exist."; \
 		fi; \
 	done
 
@@ -98,7 +98,7 @@ shell:
 	multipass shell $$name
 
 update-inventory:
-	@echo "🛠️  Updating inventory.yml using VM's preferred network IPs..."
+	@echo "🛠️ Updating inventory.yml using VM's preferred network IPs..."
 	@$(YQ) -r '.vms[] | .name' vms.yml | while read name; do \
 		net="$$( $(YQ) -r ".vms[] | select(.name==\"$$name\") | .network" vms.yml )"; \
 		if [ "$$(uname)" = "Darwin" ]; then \
@@ -122,7 +122,7 @@ update-inventory:
 				$(YQ) -i ".all.children.workers.hosts.\"$$name\".ansible_host = \"$$selected_ip\"" inventory.yml; \
 			fi; \
 		else \
-			echo "⚠️  No matching IP for $$name in subnet $$subnet.x"; \
+			echo "⚠️ No matching IP for $$name in subnet $$subnet.x"; \
 		fi; \
 	done
 	@echo "✅ inventory.yml has been updated."
