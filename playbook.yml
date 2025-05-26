@@ -1,0 +1,11 @@
+- name: Install RKE2 Master
+  hosts: masters
+  become: true
+  roles:
+    - rke2-master
+
+- name: Install RKE2 Workers
+  hosts: workers
+  become: true
+  roles:
+    - rke2-worker

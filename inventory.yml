@@ -1,0 +1,19 @@
+all:
+  children:
+    masters:
+      hosts:
+        k8s-master-01:
+          ansible_host: 192.168.50.31
+    workers:
+      hosts:
+        k8s-worker-01:
+          ansible_host: 192.168.50.149
+        k8s-worker-02:
+          ansible_host: 192.168.50.127
+        k8s-worker-03:
+          ansible_host: 192.168.50.252
+  vars:
+    ansible_user: rke2
+    ansible_ssh_private_key_file: ~/.ssh/id_ed25519
+    ansible_ssh_common_args: '-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null'
+  

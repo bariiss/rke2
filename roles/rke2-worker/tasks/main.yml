@@ -1,0 +1,39 @@
+- name: Install RKE2 agent
+  shell: |
+    curl -sfL https://get.rke2.io | INSTALL_RKE2_TYPE=agent sh -
+  args:
+    creates: /usr/local/bin/rke2
+
+- name: Create RKE2 agent config directory
+  file:
+    path: /etc/rancher/rke2
+    state: directory
+    mode: '0755'
+
+- name: Read node token from master
+  slurp:
+    src: /var/lib/rancher/rke2/server/node-token
+  delegate_to: "{{ groups['masters'][0] }}"
+  run_once: true
+  register: token_file
+
+- name: Set node token fact
+  set_fact:
+    rke2_node_token: "{{ token_file.content | b64decode | trim }}"
+
+- name: Create config.yaml for rke2-agent (with master IP)
+  copy:
+    dest: /etc/rancher/rke2/config.yaml
+    content: |
+      server: https://{{ hostvars[groups['masters'][0]]['ansible_host'] | default(groups['masters'][0]) }}:9345
+      token: {{ rke2_node_token }}
+      node-name: {{ inventory_hostname }}
+      node-label:
+        - "role=worker"
+    mode: '0644'
+
+- name: Enable and restart rke2-agent
+  systemd:
+    name: rke2-agent
+    enabled: true
+    state: restarted
