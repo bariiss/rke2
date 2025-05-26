@@ -1,14 +1,25 @@
 # RKE2 Kubernetes Cluster Automation
 
 <div align="center">
-  <img src="https://www.rancher.com/assets/img/logos/rancher-suse-logo-horizontal-color.svg" alt="Rancher Logo" width="400"/>
-  <br/><br/>
-  <p>
-    <img src="https://res.cloudinary.com/canonical/image/fetch/f_auto,q_auto,fl_sanitize,c_fill,w_720/https://lh3.googleusercontent.com/hZHbXA0bvKJ089pTXuoTPgv-T4eHBIvmfZ4nh4tkKg2OoZ8cTQNtZXLl6zeXjNc4Df0BnxzfF4pTFoCHWm7WFz6ci8h4QzqnVA80eWcNbwdZegHhJRea-cWr05wTw-WDbbzuIumrIGZNnl0Xxw" alt="Multipass Logo" height="80"/>
-    &nbsp;&nbsp;&nbsp;&nbsp;
-    <img src="https://upload.wikimedia.org/wikipedia/commons/2/24/Ansible_logo.svg" alt="Ansible Logo" height="80"/>
-  </p>
-  <em>Automated Kubernetes cluster deployment with RKE2, Multipass, and Ansible</em>
+
+## 🚢 Powered by
+
+<table>
+  <tr>
+    <td align="center" width="33%" bgcolor="#ffffff">
+      <img src="https://www.rancher.com/assets/img/logos/rancher-logo-stacked-color.svg" alt="Rancher Logo" width="250"/>
+    </td>
+    <td align="center" width="33%" bgcolor="#ffffff">
+      <img src="https://res.cloudinary.com/canonical/image/fetch/f_auto,q_auto,fl_sanitize,c_fill,w_720/https://lh3.googleusercontent.com/hZHbXA0bvKJ089pTXuoTPgv-T4eHBIvmfZ4nh4tkKg2OoZ8cTQNtZXLl6zeXjNc4Df0BnxzfF4pTFoCHWm7WFz6ci8h4QzqnVA80eWcNbwdZegHhJRea-cWr05wTw-WDbbzuIumrIGZNnl0Xxw" alt="Multipass Logo" width="250"/>
+    </td>
+    <td align="center" width="33%" bgcolor="#ffffff">
+      <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/24/Ansible_logo.svg/1664px-Ansible_logo.svg.png" alt="Ansible Logo" width="250"/>
+    </td>
+  </tr>
+</table>
+
+### *Automated Kubernetes cluster deployment with RKE2, Multipass, and Ansible*
+
 </div>
 
 A robust automation project for deploying RKE2 (Rancher Kubernetes Engine 2) clusters on local virtual machines using Multipass, cloud-init, and Ansible.
