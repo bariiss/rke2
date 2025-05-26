@@ -7,7 +7,7 @@ users:
     sudo: ALL=(ALL) NOPASSWD:ALL
     shell: /bin/bash
     ssh_authorized_keys:
-      - ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIGzfTytmafhBngyZ6teDs5/90SERZJj/VfJPtZH19gsO baris.dogu@Bariss-MacBook-Air.local
+      - ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIGzfTytmafhBngyZ6teDs5/90SERZJj/VfJPtZH19gsO baris.dogu@Bariss-MacBook-Air.local # change this to your public key
 
 package_update: true
 package_upgrade: true
