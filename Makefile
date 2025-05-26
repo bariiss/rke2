@@ -1,6 +1,6 @@
 YQ = yq
 
-.PHONY: all check-deps launch destroy purge status shell update-inventory
+.PHONY: all check-deps launch destroy purge status shell update-inventory ssh-master ssh-worker
 
 all: check-deps launch update-inventory run-ansible
 
@@ -126,6 +126,9 @@ update-inventory:
 		fi; \
 	done
 	@echo "✅ inventory.yml has been updated."
+	@echo "💾 Verifying inventory.yml changes have been saved properly..."
+	@sync
+	@sleep 1
 
 list-interfaces:
 	multipass networks
@@ -134,3 +137,22 @@ run-ansible:
 	@echo "🔄 Running Ansible playbook..."
 	ansible-playbook -i inventory.yml playbook.yml
 	@echo "✅ Ansible playbook execution completed."
+
+ssh-master:
+	@echo "🔑 Connecting to master node via SSH..."
+	@master_ip=$$($(YQ) -r '.all.children.masters.hosts."k8s-master-01".ansible_host' inventory.yml); \
+	ssh_key=$$($(YQ) -r '.all.vars.ansible_ssh_private_key_file' inventory.yml); \
+	ssh_user=$$($(YQ) -r '.all.vars.ansible_user' inventory.yml); \
+	echo "📝 SSH Command: ssh -i $$ssh_key $$ssh_user@$$master_ip"; \
+	ssh -i $$ssh_key $$ssh_user@$$master_ip
+
+ssh-worker:
+	@echo "🔎 Available worker nodes:"
+	@$(YQ) -r '.all.children.workers.hosts | keys | .[]' inventory.yml | nl
+	@read -p "Enter the worker number to connect to: " worker_num; \
+	worker_name=$$($(YQ) -r '.all.children.workers.hosts | keys | .['$$((worker_num-1))']' inventory.yml); \
+	worker_ip=$$($(YQ) -r '.all.children.workers.hosts."'$$worker_name'".ansible_host' inventory.yml); \
+	ssh_key=$$($(YQ) -r '.all.vars.ansible_ssh_private_key_file' inventory.yml); \
+	ssh_user=$$($(YQ) -r '.all.vars.ansible_user' inventory.yml); \
+	echo "📝 SSH Command: ssh -i $$ssh_key $$ssh_user@$$worker_ip"; \
+	ssh -i $$ssh_key $$ssh_user@$$worker_ip

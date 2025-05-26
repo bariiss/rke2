@@ -37,3 +37,9 @@
     name: rke2-agent
     enabled: true
     state: restarted
+    
+- name: Show SSH connection information
+  debug:
+    msg: >
+      To connect to this worker node via SSH, use:
+      ssh -i {{ ansible_ssh_private_key_file | default('~/.ssh/id_ed25519') }} {{ ansible_user }}@{{ ansible_host }}

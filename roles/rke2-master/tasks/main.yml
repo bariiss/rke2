@@ -3,6 +3,21 @@
     curl -sfL https://get.rke2.io | INSTALL_RKE2_TYPE=server sh -
   args:
     creates: /usr/local/bin/rke2
+    
+- name: Create RKE2 server config directory
+  file:
+    path: /etc/rancher/rke2
+    state: directory
+    mode: '0755'
+
+- name: Create RKE2 server config.yaml with proper TLS SAN settings
+  copy:
+    dest: /etc/rancher/rke2/config.yaml
+    content: |
+      tls-san:
+        - "{{ ansible_host }}"
+        - "{{ inventory_hostname }}"
+    mode: '0644'
 
 - name: Enable and start rke2-server service
   systemd:
@@ -13,7 +28,7 @@
 - name: Wait for RKE2 server to start
   wait_for:
     port: 9345
-    host: "127.0.0.1"
+    host: "{{ ansible_host }}"
     timeout: 120
 
 - name: Copy kubeconfig for later use (raw backup)
@@ -68,3 +83,9 @@
     msg: >
       ~/.kube/config has been written using server IP {{ ansible_host }}.
       Try: KUBECONFIG=/home/rke2/.kube/config kubectl get nodes
+
+- name: Show SSH connection information
+  debug:
+    msg: >
+      To connect to this master node via SSH, use:
+      ssh -i {{ ansible_ssh_private_key_file | default('~/.ssh/id_ed25519') }} {{ ansible_user }}@{{ ansible_host }}

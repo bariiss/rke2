@@ -42,10 +42,12 @@ The project will check and install these dependencies if needed:
 - **Master Node**: 
   - 4 CPUs, 4GB RAM, 20GB storage
   - Hosts the Kubernetes control plane
+  - Configured with proper TLS SAN settings
   
 - **Worker Nodes (3)**:
   - Each with 2 CPUs, 2GB RAM, 15GB storage
   - Run containerized applications
+  - Automatically join the cluster
 
 ## 🛠️ Usage
 
@@ -71,6 +73,12 @@ make update-inventory
 # Run Ansible playbook separately
 make run-ansible
 
+# Connect to master node via SSH
+make ssh-master
+
+# Connect to a worker node via SSH (interactive selection)
+make ssh-worker
+
 # Destroy all VMs
 make destroy
 
@@ -84,6 +92,8 @@ make purge
 - Automatically configures networking between nodes
 - Sets up kubeconfig for easy cluster management
 - Configures proper node labels for workload distribution
+- Performs automatic node health checks after deployment
+- Displays cluster status after setup completes
 
 ## 🔒 Security Features
 
@@ -97,6 +107,19 @@ make purge
 2. **Networking**: Automatically configured to use the same network interface
 3. **RKE2 Installation**: Master node first, then workers join using node token
 4. **Kubeconfig**: Generated and configured for remote access
+5. **Health Checks**: Automatic verification of node readiness
+6. **TLS Configuration**: Master node properly configured with correct TLS SAN entries for secure access
+
+## 🔍 Cluster Health Checks
+
+After deployment, the system automatically verifies that all nodes reach the `Ready` state. The verification process:
+
+- Checks node status every 10 seconds for up to 5 minutes
+- Provides a detailed status report of all nodes
+- Shows warnings if any nodes fail to reach the `Ready` state
+- Displays overall cluster status including system pods
+
+This ensures your cluster is fully functional before you start using it.
 
 ## 🤝 Contributing
 

@@ -9,3 +9,42 @@
   become: true
   roles:
     - rke2-worker
+
+- name: Check overall cluster status
+  hosts: masters[0]
+  become: true
+  tasks:
+    - name: Wait for all nodes to register (additional 30s buffer)
+      pause:
+        seconds: 30
+      
+    - name: Get cluster status
+      shell: kubectl get nodes -o wide
+      register: cluster_status
+      environment:
+        KUBECONFIG: /etc/rancher/rke2/rke2.yaml
+      changed_when: false
+    
+    - name: Show cluster status
+      debug:
+        msg: |
+          📊 Cluster Status:
+          {{ cluster_status.stdout }}
+    
+    - name: Check for any non-Ready nodes
+      shell: kubectl get nodes | grep -v " Ready "
+      register: not_ready_nodes
+      environment:
+        KUBECONFIG: /etc/rancher/rke2/rke2.yaml
+      failed_when: false
+      changed_when: false
+    
+    - name: Display summary
+      debug:
+        msg: "✅ All nodes are in Ready state! Cluster is fully operational."
+      when: not_ready_nodes.rc != 0
+      
+    - name: Display warning if nodes are not Ready
+      debug:
+        msg: "⚠️  WARNING: Some nodes are not in Ready state. Check the cluster status above."
+      when: not_ready_nodes.rc == 0
