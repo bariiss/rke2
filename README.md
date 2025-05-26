@@ -1,7 +1,15 @@
 # RKE2 Kubernetes Cluster Automation
 
-![Kubernetes RKE2 Logo](https://www.rancher.com/assets/img/logos/rancher-suse-logo-horizontal-color.svg)
-*Automated Kubernetes cluster deployment with RKE2, Multipass, and Ansible*
+<div align="center">
+  <img src="https://www.rancher.com/assets/img/logos/rancher-suse-logo-horizontal-color.svg" alt="Rancher Logo" width="400"/>
+  <br/><br/>
+  <p>
+    <img src="https://res.cloudinary.com/canonical/image/fetch/f_auto,q_auto,fl_sanitize,c_fill,w_720/https://lh3.googleusercontent.com/hZHbXA0bvKJ089pTXuoTPgv-T4eHBIvmfZ4nh4tkKg2OoZ8cTQNtZXLl6zeXjNc4Df0BnxzfF4pTFoCHWm7WFz6ci8h4QzqnVA80eWcNbwdZegHhJRea-cWr05wTw-WDbbzuIumrIGZNnl0Xxw" alt="Multipass Logo" height="80"/>
+    &nbsp;&nbsp;&nbsp;&nbsp;
+    <img src="https://cdn.icon-icons.com/icons2/2389/PNG/512/ansible_logo_icon_145495.png" alt="Ansible Logo" height="80"/>
+  </p>
+  <em>Automated Kubernetes cluster deployment with RKE2, Multipass, and Ansible</em>
+</div>
 
 A robust automation project for deploying RKE2 (Rancher Kubernetes Engine 2) clusters on local virtual machines using Multipass, cloud-init, and Ansible.
 
