@@ -18,18 +18,27 @@
       pause:
         seconds: 30
       
-    - name: Get cluster status
-      shell: kubectl get nodes -o wide
-      register: cluster_status
+    - name: Get cluster status (formatted)
+      shell: |
+        printf "%-20s %-10s %-20s %-15s %-15s\n" "NODE" "STATUS" "ROLES" "INTERNAL-IP" "VERSION"
+        printf "%-20s %-10s %-20s %-15s %-15s\n" "----" "------" "-----" "-----------" "-------"
+        for node in $(kubectl get nodes --no-headers -o custom-columns=NAME:.metadata.name); do
+          status=$(kubectl get node $node --no-headers | awk '{print $2}')
+          roles=$(kubectl get node $node -o jsonpath='{.metadata.labels.kubernetes\.io/role}' || echo "worker")
+          ip=$(kubectl get node $node -o jsonpath='{.status.addresses[?(@.type=="InternalIP")].address}')
+          version=$(kubectl get node $node -o jsonpath='{.status.nodeInfo.kubeletVersion}')
+          printf "%-20s %-10s %-20s %-15s %-15s\n" "$node" "$status" "$roles" "$ip" "$version"
+        done
+      register: cluster_status_formatted
       environment:
         KUBECONFIG: /etc/rancher/rke2/rke2.yaml
       changed_when: false
     
-    - name: Show cluster status
+    - name: Show formatted cluster status
       debug:
         msg: |
           📊 Cluster Status:
-          {{ cluster_status.stdout }}
+          {{ cluster_status_formatted.stdout }}
     
     - name: Check for any non-Ready nodes
       shell: kubectl get nodes | grep -v " Ready "
@@ -48,3 +57,86 @@
       debug:
         msg: "⚠️  WARNING: Some nodes are not in Ready state. Check the cluster status above."
       when: not_ready_nodes.rc == 0
+      
+    - name: Get pod status (formatted)
+      shell: |
+        printf "%-25s %-40s %-10s %-5s\n" "NAMESPACE" "NAME" "STATUS" "READY"
+        printf "%-25s %-40s %-10s %-5s\n" "---------" "----" "------" "-----"
+        kubectl get pods -A --no-headers | grep -v "Running" | while read -r line; do
+          ns=$(echo "$line" | awk '{print $1}')
+          name=$(echo "$line" | awk '{print $2}')
+          status=$(echo "$line" | awk '{print $4}')
+          ready=$(echo "$line" | awk '{print $3}')
+          printf "%-25s %-40s %-10s %-5s\n" "$ns" "$name" "$status" "$ready"
+        done || echo "All pods are running"
+      register: pod_status_formatted
+      environment:
+        KUBECONFIG: /etc/rancher/rke2/rke2.yaml
+      changed_when: false
+    
+    - name: Show non-running pods only
+      debug:
+        msg: |
+          📦 Non-Running Pods (if any):
+          {{ pod_status_formatted.stdout }}
+          
+    - name: Get node counts
+      shell: kubectl get nodes --no-headers | wc -l
+      register: total_nodes
+      environment:
+        KUBECONFIG: /etc/rancher/rke2/rke2.yaml
+      changed_when: false
+      
+    - name: Get ready node counts
+      shell: kubectl get nodes --no-headers | grep " Ready " | wc -l
+      register: ready_nodes
+      environment:
+        KUBECONFIG: /etc/rancher/rke2/rke2.yaml
+      changed_when: false
+
+    - name: Get pod counts
+      shell: kubectl get pods -A --no-headers | wc -l
+      register: total_pods
+      environment:
+        KUBECONFIG: /etc/rancher/rke2/rke2.yaml
+      changed_when: false
+
+    - name: Get running pod counts
+      shell: kubectl get pods -A --no-headers | grep " Running " | wc -l
+      register: running_pods
+      environment:
+        KUBECONFIG: /etc/rancher/rke2/rke2.yaml
+      changed_when: false
+        
+    - name: Build system summary
+      set_fact:
+        system_summary_report: |
+          ==== SYSTEM SUMMARY =====
+          Total Nodes:  {{ total_nodes.stdout | trim }}
+          Ready Nodes:  {{ ready_nodes.stdout | trim }}
+          System Pods:  {{ total_pods.stdout | trim }}
+          Running Pods: {{ running_pods.stdout | trim }}
+          =======================
+      
+    - name: Show system summary
+      debug:
+        msg: |
+          🖥️  System Summary:
+          {{ system_summary_report }}
+          
+    - name: Show SSH connection information
+      debug:
+        msg: |
+          🔑 SSH Connection Information:
+          
+          # Master Node ({{ groups['masters'][0] }}):
+          ssh -i ~/.ssh/id_ed25519 rke2@{{ ansible_host }}
+          
+          # Worker Nodes:
+          {% for host in groups['workers'] %}
+          ssh -i ~/.ssh/id_ed25519 rke2@{{ hostvars[host].ansible_host }} # {{ host }}
+          {% endfor %}
+          
+          # Quick Commands:
+          make ssh-master    # Connect to master node
+          make ssh-worker    # Select and connect to a worker node
