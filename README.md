@@ -1,5 +1,8 @@
 # RKE2 Kubernetes Cluster Automation
 
+![Kubernetes RKE2 Logo](https://www.rancher.com/assets/img/logos/rancher-suse-logo-horizontal-color.svg)
+*Automated Kubernetes cluster deployment with RKE2, Multipass, and Ansible*
+
 A robust automation project for deploying RKE2 (Rancher Kubernetes Engine 2) clusters on local virtual machines using Multipass, cloud-init, and Ansible.
 
 ## 🚀 Overview
@@ -64,6 +67,12 @@ make status
 make shell
 ```
 
+The deployment process will:
+1. Launch the virtual machines with Multipass
+2. Configure networking and host connections
+3. Install RKE2 on master and worker nodes
+4. Verify node status with well-formatted output
+
 ### Managing the Cluster
 
 ```bash
@@ -93,7 +102,8 @@ make purge
 - Sets up kubeconfig for easy cluster management
 - Configures proper node labels for workload distribution
 - Performs automatic node health checks after deployment
-- Displays cluster status after setup completes
+- Displays well-formatted cluster status after setup completes
+- Shows SSH connection information for all nodes
 
 ## 🔒 Security Features
 
@@ -109,15 +119,39 @@ make purge
 4. **Kubeconfig**: Generated and configured for remote access
 5. **Health Checks**: Automatic verification of node readiness
 6. **TLS Configuration**: Master node properly configured with correct TLS SAN entries for secure access
+7. **Output Formatting**: Clear, well-organized status displays with proper column alignment
+8. **System Summary**: Consolidated metrics about nodes and pods
 
 ## 🔍 Cluster Health Checks
 
 After deployment, the system automatically verifies that all nodes reach the `Ready` state. The verification process:
 
 - Checks node status every 10 seconds for up to 5 minutes
-- Provides a detailed status report of all nodes
+- Provides a detailed status report of all nodes with clear formatting
 - Shows warnings if any nodes fail to reach the `Ready` state
 - Displays overall cluster status including system pods
+
+The output is formatted for better readability with clear columns and alignment:
+
+```
+NODE                STATUS    ROLES           INTERNAL-IP     VERSION          
+----                ------    -----           -----------     -------          
+k8s-master-01       Ready     control-plane   192.168.50.xxx  v1.32.5+rke2r1
+k8s-worker-01       Ready     worker          192.168.50.xxx  v1.32.5+rke2r1
+k8s-worker-02       Ready     worker          192.168.50.xxx  v1.32.5+rke2r1  
+k8s-worker-03       Ready     worker          192.168.50.xxx  v1.32.5+rke2r1  
+```
+
+A summary section also provides key metrics:
+
+```
+==== SYSTEM SUMMARY =====
+Total Nodes:  4
+Ready Nodes:  4
+System Pods:  23
+Running Pods: 23
+=======================
+```
 
 This ensures your cluster is fully functional before you start using it.
 
